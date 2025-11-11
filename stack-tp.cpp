@@ -9,49 +9,69 @@
 //      (qui testent si la pile est resp. vide ou pleine)
 //      il faut les utiliser dans votre code de push et pop
 
-void print(... /* les arguments ici */)
+void print(int* tab,int size,int& nb)
 // cette fonction affiche les entiers empilés
 {
-    // votre code ici
+   std::cout<< '[';
+    for(int i=0; i<nb; i++){
+        std::cout<< tab[i];
+        if(i<nb-1) std::cout<<',';
+    }
+    std::cout<< '[' <<std::endl;
 }
 
+
 // renvoie true si la pile est vide, false sinon
-bool is_empty(... /* les arguments ici */)
+bool is_empty(int* tab,int size,int nb)
 {
-    // votre code ici
+    return nb==0;
 }
 
 // renvoie true si la pile est pleine, false sinon
-bool is_full(... /* les arguments ici */)
+bool is_full(int* tab,int size,int nb)
 {
-    // votre code ici
+    return nb==size;
 }
 
-void push(... /* les arguments ici */)
+void push(int* tab,int size, int& nb, int a)
 // cette fonction ajoute un entier à la pile passé en argument
 // elle doit s'assurer que la pile n'est pas pleine avant d'empiler
 // elle lance une exception si problème
 {
-    // votre code ici
+      if(is_full(tab, size, nb))
+      { 
+        throw std::overflow_error("Pile pleine");
+    }
+    { tab[nb]=a;
+        nb=nb+1;
+    }
 }
 
-int top(... /* les arguments ici */) // (cette fonction ne dépile pas)
+int top(int* tab, int size, int nb) // (cette fonction ne dépile pas)
 // cette fonction retourne l'entier en haut de la pile (le dernier empilé)
 // à la sortie de cette fonction l'élément retourné reste dans la pile
 // elle doit s'assurer que la pile n'est pas vide avant de la dépiler
 // elle lance une exception si problème
 {
-    // votre code ici
+    if (is_empty( tab, size, nb))
+        throw std::overflow_error("pile vide");
+    return tab[nb - 1];
 }
 
-int pop(... /* les arguments ici */) // (cette fonction dépile)
+
+int pop(int* tab, int size, int& nb) // (cette fonction dépile)
 // cette fonction retourne l'entier en haut de la pile (le dernier empilé)
 // à la sortie de cette fonction l'élément retourné n'est plus compté dans la pile
 // elle doit s'assurer que la pile n'est pas vide avant de la dépiler
 // elle lance une exception si problème
-{
-    // votre code ici
+
+ {
+    if (is_empty( tab, size, nb))
+        throw std::overflow_error("pile vide");
+    nb=nb-1;
+    return tab[nb - 1];
 }
+
 
 #include <stdexcept>
 // https://en.cppreference.com/w/cpp/header/stdexcept.html
@@ -74,6 +94,7 @@ int main()
 
         // on affiche l'élément en haut de pile
         std::cout << top(stack, size, nb) << std::endl; // affiche -17
+        push(stack, size, nb, 90);
 
         print(stack, size, nb); // affiche [-17 90 [
 

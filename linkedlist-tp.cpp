@@ -49,13 +49,51 @@
 // (i.e. libérer les cellules quand elles ne sont plus utilisées)
 
 // Voici un exemple de main qui doit fonctionner avec votre liste chaînée:
+  
+#include <iostream>
+
 
 struct Cell {
-// votre code ici
+ int Valeur;
+ Cell* next; //adresse de la cellule suivante
+ Cell(int v,Cell* n): Valeur(v), next(n){}
 };
 
 struct LinkedList {
-  // votre code ici
+  Cell* head;
+  LinkedList():head(nullptr){}
+
+  void push_front(int v){
+    Cell* newcell= new Cell(v, head); //on crée une nouvelle cellule avec la valeur de la case et l'adresse de la cellule suivante
+    head=newcell; //notre nouvelle cellule est en tête
+  }
+  void print(){
+    Cell* actuel=head;  //on parcourt toutes les cellules qu'on affiche
+    while(actuel!=nullptr){
+      std::cout<<actuel->Valeur<<std::endl;
+      Cell *next=actuel->next;
+      actuel=next;
+    }
+  }
+  bool is_empty(){
+    return head==nullptr;
+  }
+  Cell* find(int v){
+    Cell* actuel=head;
+    while((actuel!=nullptr) and (actuel->Valeur!=v)){
+      actuel=actuel->next;
+    }
+    return actuel;
+  }
+  void remove(int v){
+    if ((not is_empty())and(find(v)!=nullptr)){;
+      Cell* place=find(v);
+      Cell* next=place->next;
+      delete place;  //problème avec cette fonction... je crois qu'il me faudrait le pointeur avant v ... et pas après
+    }
+
+  }
+
 };
 
 int main () {

@@ -17,11 +17,18 @@ struct Matrix{
     int ligne;
     int colonne;
     Buffer* B;
+    
     Matrix(int l, int c): ligne(l), colonne(c){
         int size=l*c;
         B=new Buffer(size);
         B->compteur +=1;
     }
+
+    
+    Matrix(int l, int c, Buffer* b): ligne(l), colonne(c), B(b){
+        B->compteur +=1;
+    }
+
     ~Matrix(){
         B->compteur += -1;
         if(B->compteur==0){
@@ -42,7 +49,10 @@ struct Matrix{
     double get(int i, int j){
         return B->tab[i*colonne+j];
     }
-    
+    Matrix reshape(int m, int n){
+        return Matrix(m,n,B);
+    }
+
 };
 
 int main(){
@@ -50,6 +60,9 @@ int main(){
     m.set(0,0,17.3);
     double d=m.get(0,0);
     m.print();
-
+    Matrix h=m.reshape(2,6);
+    h.print();
+    h.set(0,0,21.3);
+    h.print();
     return 0;
 }

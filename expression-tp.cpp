@@ -15,61 +15,82 @@ Additional work:
 ./main 87 12 - + 75 -
 */
 #include <iostream>
-Class Op{//je vois pas quoi mettre dedans
+#include <vector>
+#include <stdexcept>
+class Op{
+    public:
+    virtual double eval() const = 0;
+    virtual void print() const = 0;
+    virtual ~Op() {}   // pour ces deux lignes j'a demandé à l'IA je ne comprends toujours pas du tout...
     };
-Class Constant: public Op{
+class Constant: public Op{
     double value;
-    Constant(double v):value v{}
-    void print(){
+    public:
+    Constant(double v):value(v) {}
+    void print()const override{
         std::cout<<value<<std::endl;
     }
-    void eval(){
+    double eval()const override{
         return value;
     }
 };
-Class Plus: public Op{
-    Constant Expression& droite;
-    Constant Expression& gauche;
+class Plus: public Op{
+    const Op& droite;
+    const Op& gauche;
     public:
-    Plus(Constant d, Constant g):droite(d),gauche(g){}
-    double eval{
-        return droite.eval()+gauche.eval()
+    Plus(const Op& d, const Op& g):droite(d),gauche(g){}
+    double eval()const override{
+        return droite.eval()+gauche.eval();
     }
-    void print{
+    void print()const override{
         gauche.print();
         droite.print();
         std::cout<<'+'<<std::endl;
     }
 };
-Class UnaryMinus:public Op{
-    Constant Expression& nb;
+class Minus: public Op{
+    const Op& droite;
+    const Op& gauche;
     public:
-    UnaryMinus( Constant n):nb(n){}
-    double eval{
+    Minus(const Op& d, const Op& g):droite(d),gauche(g){}
+    double eval()const override{
+        return droite.eval()-gauche.eval();
+    }
+    void print()const override{
+        gauche.print();
+        droite.print();
+        std::cout<<'-'<<std::endl;
+    }
+};
+class UnaryMinus:public Op{
+    const Op& nb;
+    public:
+    UnaryMinus( const Op& n):nb(n){}
+    double eval()const override{
         return -nb.eval();
     }
-    void print{
+    void print()const override{
         nb.print();
         std::cout<<'-'<<std::endl;
     }
-}
-Class Divide:public Op{
-    Constant Expression& numerateur;
-    Constant Expression& dénominateur;
+};
+class Divide:public Op{
+    const Op& numerateur;
+    const Op& denominateur;
     public:
-    Plus(Constant n, Constant d):numerateur(n),denominateur(d){}
-    double eval{
+    Divide(const Op& n, const Op& d):numerateur(n),denominateur(d){}
+    double eval()const override{
         if (denominateur.eval()==0){
-            throw std::runtime_error("Division par zero !");
+            throw std::runtime_error("Division par zero");
         }
-        return numerateur.eval()/denominateur.eval()
+        return numerateur.eval()/denominateur.eval();
     }
-    void print{
-        numérateur.print();
-        dénominateur.print();
+    void print()const override{
+        numerateur.print();
+        denominateur.print();
         std::cout<<'/'<<std::endl;
     }
-}
+};
 
 int main()
 {
@@ -101,10 +122,16 @@ int main()
         std::cout << std::endl;
         std::cout << d1.eval() << std::endl; // throws an instance of 'std::runtime_error'
 
-        std::vector<???> expr;
-        expr.push_back(???c1);
-        expr.push_back(???u1);
-        // parcourez le vecteur
+        std::vector<const Op*> expr;
+        expr.push_back(&c1);
+        expr.push_back(&u1);
+        expr.push_back(&p1);
+
+        std::cout << "Contenu du vecteur :" << std::endl;
+        for (const Op* o : expr) {
+            o->print();
+            std::cout << " -> eval: " << o->eval() << std::endl;
+        }
     }
     catch (std::runtime_error &e)
     {

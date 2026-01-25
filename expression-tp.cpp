@@ -14,6 +14,62 @@ Additional work:
 
 ./main 87 12 - + 75 -
 */
+#include <iostream>
+Class Op{//je vois pas quoi mettre dedans
+    };
+Class Constant: public Op{
+    double value;
+    Constant(double v):value v{}
+    void print(){
+        std::cout<<value<<std::endl;
+    }
+    void eval(){
+        return value;
+    }
+};
+Class Plus: public Op{
+    Constant Expression& droite;
+    Constant Expression& gauche;
+    public:
+    Plus(Constant d, Constant g):droite(d),gauche(g){}
+    double eval{
+        return droite.eval()+gauche.eval()
+    }
+    void print{
+        gauche.print();
+        droite.print();
+        std::cout<<'+'<<std::endl;
+    }
+};
+Class UnaryMinus:public Op{
+    Constant Expression& nb;
+    public:
+    UnaryMinus( Constant n):nb(n){}
+    double eval{
+        return -nb.eval();
+    }
+    void print{
+        nb.print();
+        std::cout<<'-'<<std::endl;
+    }
+}
+Class Divide:public Op{
+    Constant Expression& numerateur;
+    Constant Expression& dénominateur;
+    public:
+    Plus(Constant n, Constant d):numerateur(n),denominateur(d){}
+    double eval{
+        if (denominateur.eval()==0){
+            throw std::runtime_error("Division par zero !");
+        }
+        return numerateur.eval()/denominateur.eval()
+    }
+    void print{
+        numérateur.print();
+        dénominateur.print();
+        std::cout<<'/'<<std::endl;
+    }
+}
 
 int main()
 {

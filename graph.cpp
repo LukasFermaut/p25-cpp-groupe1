@@ -6,13 +6,14 @@
 
 struct Edge{
     double poids;
-    int begin;
-    int end;
-    Edge(int b,int e, double p):begin(b),end(e),poids(p){}
+    int* begin;
+    int* end;
+    Edge(int* b,int* e, double p):begin(b),end(e),poids(p){}
 
     void print(){
-        std::cout<<begin<<poids<<end<<std::endl;
+        std::cout<<begin<<" "<<poids<<" "<<end<<std::endl;
     }
+    ~Edge(){};
 };
 
 struct Vertex{
@@ -24,6 +25,8 @@ struct Vertex{
             n[i]->print();
         }
     }
+    ~Vertex(){};
+
 };
 
 struct Graph{
@@ -32,7 +35,7 @@ struct Graph{
         while(v.size()<=std::max(b,e)){
             addvertex(v.size());
         }
-        v[b]->n.push_back(new Edge(b,e,p));
+        v[b]->n.push_back(new Edge(&b,&e,p));
 
     }
     void addvertex(int i){
@@ -42,6 +45,9 @@ struct Graph{
         for(int j=0;j<v.size();j++){
             v[j]->print();
         }
+    }
+    void depthsearch(){
+        
     }
 };
 

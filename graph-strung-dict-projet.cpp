@@ -54,6 +54,9 @@
 #include <vector>
 #include <unordered_map>
 #include <set>
+#include <limits>
+
+const double INF = std::numeric_limits<double>::infinity();
 
 class Vertex;
 
@@ -96,10 +99,11 @@ class Graph
     std::vector<Vertex*> v;
     std::unordered_map<std::string, int> po;
     std::vector<std::vector<double>> adjMatrix;
+    public:
     ~Graph() {
         for (Vertex* m : v) delete m;
     }
-    void addEdge(const std::string& b, const std::string& e, double p) {
+    void add_edge(const std::string& b, const std::string& e, double p) {
         if (po.find(b) == po.end()) {
             po[b] = (int)v.size();
             v.push_back(new Vertex(b));
@@ -164,16 +168,16 @@ class Graph
     }
 
     void print_matrix() {
-    int taille = v.size(); 
+    int taille = v.size();
     for (int i = 0; i < taille; i++) {
         for (int j = 0; j < taille; j++) {
             if (adjMatrix[i][j] == INF) {
-                std::cout << std::setw(8) << "INF";
+                std::cout << "INF\t"; 
             } else {
-                std::cout << std::setw(8) << adjMatrix[i][j];
+                std::cout << adjMatrix[i][j] << "\t";
             }
         }
-        std::cout << std::endl; 
+        std::cout << std::endl;
     }
 }
 };
@@ -229,7 +233,9 @@ int main()
 
     // LECTURE DU GRAPHE
     Graph graph = read_triplet("graph0.gr");
-    graph.dfs();
+    graph.dfs("Paris");
+    graph.floyd_warshall();
+    graph.print_matrix();
 
     // EXEMPLE D'UTILISATION D'UN DICTIONNAIRE STD::UNORDERED_MAP
     // voici un exemple d'utilisation d'un dictionnaire pour stocker:

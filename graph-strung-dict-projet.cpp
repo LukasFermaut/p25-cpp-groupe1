@@ -54,6 +54,9 @@
 #include <vector>
 #include <unordered_map>
 #include <set>
+
+class Vertex;
+
 class Edge
 {   friend class Graph;
     friend class Vertex;
@@ -92,38 +95,87 @@ class Graph
     friend Vertex;
     std::vector<Vertex*> v;
     std::unordered_map<std::string, int> po;
+    std::vector<std::vector<double>> adjMatrix;
     ~Graph() {
         for (Vertex* m : v) delete m;
     }
-    void addEdge(const std::string& begin, const std::string& end, double p){
-        if (po[begin]==0){
-            po[begin]=v.size()
-            v.push_back(new Vertex(begin))
+    void addEdge(const std::string& b, const std::string& e, double p) {
+        if (po.find(b) == po.end()) {
+            po[b] = (int)v.size();
+            v.push_back(new Vertex(b));
         }
-        if(po[end]==0){
-            po[end]=v.size()
-            v.push_back(new Vertex(end))
-            }
-    
-        int b = po[begin];
-        int e = po[end];
-        v[b]->n.push_back(new Edge(v[e], p));
-    }
-    void addvertex(const std::string& name) {
-        if (po[name] == 0) {
-            po[name] = v.size();        
-            v.push_back(new Vertex(name)); 
-     }
-    }
-    void print(){
-        for(int j=0;j<v.size();j++){
-            v[j]->print();
+        if (po.find(e) == po.end()) {
+            po[e] = (int)v.size();
+            v.push_back(new Vertex(e));
         }
-    }
-    void depthsearch(){}
-    void dfs() {}
-    
 
+        int bi = po[b];
+        int ei = po[e];
+        v[bi]->n.push_back(new Edge(v[bi], v[ei], p));
+    }
+
+    void dfs(const std::string& name) {
+        if (po.find(name) == po.end()) return;
+        std::set<Vertex*> visited;
+        std::cout << "DFS depuis " << name << " : ";
+        depthsearch(v[po[name]], visited);
+        std::cout << std::endl;
+    }
+
+    void depthsearch(Vertex* current, std::set<Vertex*>& visited) {
+        if (visited.count(current)) return;
+        
+        std::cout << current->name << " ";
+        visited.insert(current);
+
+        for (Edge* e : current->n) {
+            depthsearch(e->end, visited);
+        }
+    }
+
+    void build_matrix() {
+        int size = v.size();
+        adjMatrix.assign(size, std::vector<double>(size, INF));
+        
+        for (int i = 0; i < size; ++i) {
+            adjMatrix[i][i] = 0;
+            for (Edge* e : v[i]->n) {
+                int j = po[e->end->name];
+                adjMatrix[i][j] = e->poids;
+            }
+        }
+    }
+
+    void floyd_warshall() {
+        if (adjMatrix.empty()) build_matrix();
+        int size = v.size();
+
+        for (int k = 0; k < size; ++k) {
+            for (int i = 0; i < size; ++i) {
+                for (int j = 0; j < size; ++j) {
+                    if (adjMatrix[i][k] != INF && adjMatrix[k][j] != INF) {
+                        if (adjMatrix[i][k] + adjMatrix[k][j] < adjMatrix[i][j]) {
+                            adjMatrix[i][j] = adjMatrix[i][k] + adjMatrix[k][j];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void print_matrix() {
+    int taille = v.size(); 
+    for (int i = 0; i < taille; i++) {
+        for (int j = 0; j < taille; j++) {
+            if (adjMatrix[i][j] == INF) {
+                std::cout << std::setw(8) << "INF";
+            } else {
+                std::cout << std::setw(8) << adjMatrix[i][j];
+            }
+        }
+        std::cout << std::endl; 
+    }
+}
 };
 
 Graph read_triplet(const std::string &filename)
@@ -244,11 +296,3 @@ int main()
     return 0;
 }
 
-/*
-
-mettre dans le fichier graph0.gr par exemple
-Paris Lyon 100.56 Paris Nice 200.50 Paris Marseille 140.20 Paris Toulouse 200.8
-Paris Le_Havre 120 Lyon Nice 80.50 Lyon Marseille 50
-Marseille Nice 70 Marseille Toulouse 80 Toulouse Nice 100
-
-*/
